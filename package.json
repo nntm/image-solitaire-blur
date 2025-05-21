@@ -18,6 +18,9 @@
     "homepage": "https://github.com/nntm/image-solitaire-blur#readme",
     "description": "",
     "dependencies": {
+        "colorthief": "^2.6.0",
+        "dominant-color": "^0.0.1",
+        "jszip": "^3.10.1",
         "p5": "^2.0.2"
     },
     "devDependencies": {
