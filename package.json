@@ -1,0 +1,27 @@
+{
+    "name": "image-solitaire-blur",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "vite"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/nntm/image-solitaire-blur.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/nntm/image-solitaire-blur/issues"
+    },
+    "homepage": "https://github.com/nntm/image-solitaire-blur#readme",
+    "description": "",
+    "dependencies": {
+        "p5": "^2.0.2"
+    },
+    "devDependencies": {
+        "@types/p5": "^1.7.6",
+        "vite": "^6.3.5"
+    }
+}
