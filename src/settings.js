@@ -19,5 +19,4 @@ export const PLANE_ROTATING_SPEED = 0.004;
 export const PLANE_POS_OFFSET_RANGE = 0.4;
 export const PLANE_MAX_ROTATION = Math.PI * 1.5;
 
-export const PLANE_DURATION = 60 * 4;
-export const TEXT_DURATION = 60 * 4;
+export const PLANE_DURATION = 60 * 8;
