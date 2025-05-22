@@ -4,6 +4,7 @@ import ColorThief from "./node_modules/colorthief/dist/color-thief.mjs";
 import {
     IMG_FILE_NAME,
     IMG_RESIZE_RATIO,
+    PLANE_COUNT,
     PLANE_POS_OFFSET_RANGE,
     PLANE_ROTATING_SPEED,
     TOTAL_FRAMES,
@@ -78,7 +79,7 @@ const sketch = (p) => {
 
     const initPlanes = () => {
         planes = [];
-        for (let i = 0; i < 1; i++) planes.push(new Plane());
+        for (let i = 0; i < PLANE_COUNT; i++) planes.push(new Plane());
     };
 
     //-----------------------------------------------------------------------------//
@@ -165,25 +166,43 @@ const sketch = (p) => {
 };
 
 class Plane {
-    constructor() {
+    constructor(startingRotation = false) {
         this.x = random(-0.5, 0.5) * PLANE_POS_OFFSET_RANGE;
         this.y = random(-0.5, 0.5) * PLANE_POS_OFFSET_RANGE;
 
-        this.rotateX = random(0, Math.PI * 2);
-        this.rotateY = random(0, Math.PI * 2);
-        this.rotateZ = random(0, Math.PI * 2);
+        if (startingRotation) {
+            let n = Math.floor(Math.random() * 3);
+
+            if (n == 0) {
+                this.rotateX = random(0, Math.PI);
+                this.rotateY = Math.PI / 2;
+                this.rotateZ = Math.PI / 2;
+            } else if (n == 1) {
+                this.rotateX = Math.PI / 2;
+                this.rotateY = random(0, Math.PI);
+                this.rotateZ = Math.PI / 2;
+            } else {
+                this.rotateX = Math.PI / 2;
+                this.rotateY = Math.PI / 2;
+                this.rotateZ = random(0, Math.PI);
+            }
+        } else {
+            this.rotateX = random(0, Math.PI);
+            this.rotateY = random(0, Math.PI);
+            this.rotateZ = random(0, Math.PI);
+        }
 
         this.rotatingSpeeds = [
-            PLANE_ROTATING_SPEED * randomBoolean() ? 1 : -1,
-            PLANE_ROTATING_SPEED * randomBoolean() ? 1 : -1,
-            PLANE_ROTATING_SPEED * randomBoolean() ? 1 : -1,
+            PLANE_ROTATING_SPEED * (randomBoolean() ? 1 : -1),
+            PLANE_ROTATING_SPEED * (randomBoolean() ? 1 : -1),
+            PLANE_ROTATING_SPEED * (randomBoolean() ? 1 : -1),
         ];
     }
 
     update() {
         this.rotateX += this.rotatingSpeeds[0];
-        // this.rotateY += this.rotatingSpeeds[1];
-        // this.rotateZ += this.rotatingSpeeds[2];
+        this.rotateY += this.rotatingSpeeds[1];
+        this.rotateZ += this.rotatingSpeeds[2];
     }
 }
 
