@@ -1,6 +1,6 @@
 export const IMG_FILE_NAME = [
-    "the-virgin.jpg",
     "the-kiss.jpg",
+    "the-virgin.jpg",
     "fritza-riedler.jpg",
     "Judith-and-the-Head-of-Holofernes.jpg",
     "Gustav_Klimt_046.jpg",

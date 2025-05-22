@@ -21,6 +21,7 @@ const sketch = (p) => {
         IMG_FILE_NAME[Math.floor(Math.random() * IMG_FILE_NAME.length)];
 
     let backgroundColor;
+    const BG_COLOR_INDEX = 0;
 
     let planes;
 
@@ -29,12 +30,13 @@ const sketch = (p) => {
     p.setup = async () => {
         img = await loadImg(imgFileName);
         backgroundColor = await getDominantColor(imgFileName);
+        console.log(backgroundColor);
 
         if (window.innerWidth > window.innerHeight)
             p.createCanvas(window.innerHeight, window.innerHeight, p.WEBGL);
         else p.createCanvas(window.innerWidth, window.innerWidth, p.WEBGL);
 
-        p.background(backgroundColor);
+        p.background(backgroundColor[BG_COLOR_INDEX]);
         p.imageMode(p.CENTER);
         p.rectMode(p.CENTER);
         p.noStroke();
@@ -66,7 +68,7 @@ const sketch = (p) => {
 
             img.onload = () => {
                 try {
-                    const dominantColor = colorThief.getColor(img);
+                    const dominantColor = colorThief.getPalette(img, 2);
                     resolve(dominantColor);
                 } catch (err) {
                     reject(err);
@@ -88,14 +90,14 @@ const sketch = (p) => {
         drawBackground();
         applyFilters();
         updatePlanes();
-        applyMask(planeMask);
+        applyImgMask(imgMask);
     };
 
     const drawBackground = () => {
         p.fill(
-            backgroundColor[0],
-            backgroundColor[1],
-            backgroundColor[2],
+            backgroundColor[BG_COLOR_INDEX][0],
+            backgroundColor[BG_COLOR_INDEX][1],
+            backgroundColor[BG_COLOR_INDEX][2],
             ((p.frameCount % TOTAL_FRAMES) / TOTAL_FRAMES) * 20
         );
 
@@ -111,7 +113,7 @@ const sketch = (p) => {
         for (const planeData of planes) planeData.update();
     };
 
-    const applyMask = (mask) => {
+    const applyImgMask = (mask) => {
         p.push();
 
         p.clip(mask);
@@ -123,14 +125,8 @@ const sketch = (p) => {
         p.pop();
     };
 
-    const planeMask = () => {
+    const imgMask = () => {
         p.ortho();
-
-        // p.push();
-
-        // p.rotateX(p.frameCount * PLANE_ROTATING_SPEED);
-        // p.rotateY(p.frameCount * PLANE_ROTATING_SPEED);
-        // p.rotateZ(p.frameCount * PLANE_ROTATING_SPEED);
 
         for (const planeData of planes) {
             p.push();
@@ -146,8 +142,6 @@ const sketch = (p) => {
 
             p.pop();
         }
-
-        // p.pop();
     };
 
     //-----------------------------------------------------------------------------//
