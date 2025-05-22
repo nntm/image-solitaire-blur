@@ -5,8 +5,11 @@ import {
     IMG_FILE_NAME,
     IMG_RESIZE_RATIO,
     PLANE_COUNT,
+    PLANE_DURATION,
+    PLANE_MAX_ROTATION,
     PLANE_POS_OFFSET_RANGE,
     PLANE_ROTATING_SPEED,
+    TEXT_FILE_NAME,
     TOTAL_FRAMES,
 } from "./src/settings";
 import { randomBoolean, random } from "./src/utils";
@@ -20,6 +23,8 @@ const sketch = (p) => {
     let imgFileName =
         IMG_FILE_NAME[Math.floor(Math.random() * IMG_FILE_NAME.length)];
 
+    let textImg;
+
     let backgroundColor;
     const BG_COLOR_INDEX = 0;
 
@@ -30,7 +35,8 @@ const sketch = (p) => {
     p.setup = async () => {
         img = await loadImg(imgFileName);
         backgroundColor = await getDominantColor(imgFileName);
-        console.log(backgroundColor);
+
+        textImg = await loadImg(TEXT_FILE_NAME);
 
         if (window.innerWidth > window.innerHeight)
             p.createCanvas(window.innerHeight, window.innerHeight, p.WEBGL);
@@ -90,7 +96,8 @@ const sketch = (p) => {
         drawBackground();
         applyFilters();
         updatePlanes();
-        applyImgMask(imgMask);
+
+        if (p.frameCount < PLANE_DURATION) applyImgMask(imgMask);
     };
 
     const drawBackground = () => {
@@ -129,20 +136,28 @@ const sketch = (p) => {
         p.ortho();
 
         for (const planeData of planes) {
-            p.push();
+            if (
+                planeData.rotateX <= PLANE_MAX_ROTATION ||
+                planeData.rotateY <= PLANE_MAX_ROTATION ||
+                planeData.rotateZ <= PLANE_MAX_ROTATION
+            ) {
+                p.push();
 
-            p.translate(planeData.x * p.width, planeData.y * p.height, 0);
+                p.translate(planeData.x * p.width, planeData.y * p.height, 0);
 
-            p.rotateX(planeData.rotateX);
-            p.rotateY(planeData.rotateY);
-            p.rotateZ(planeData.rotateZ);
+                p.rotateX(planeData.rotateX);
+                p.rotateY(planeData.rotateY);
+                p.rotateZ(planeData.rotateZ);
 
-            p.scale(0.6);
-            p.plane(p.width, p.height);
+                p.scale(planeData.scale);
+                p.plane(p.width, p.height);
 
-            p.pop();
+                p.pop();
+            }
         }
     };
+
+    const applyTextMask = (mask) => {};
 
     //-----------------------------------------------------------------------------//
 
@@ -186,17 +201,28 @@ class Plane {
             this.rotateZ = random(0, Math.PI);
         }
 
+        // this.rotatingDirs = [
+        //     randomBoolean() ? 1 : -1,
+        //     randomBoolean() ? 1 : -1,
+        //     randomBoolean() ? 1 : -1,
+        // ];
+
         this.rotatingSpeeds = [
-            PLANE_ROTATING_SPEED * (randomBoolean() ? 1 : -1),
-            PLANE_ROTATING_SPEED * (randomBoolean() ? 1 : -1),
-            PLANE_ROTATING_SPEED * (randomBoolean() ? 1 : -1),
+            (PLANE_MAX_ROTATION - this.rotateX) / PLANE_DURATION,
+            (PLANE_MAX_ROTATION - this.rotateY) / PLANE_DURATION,
+            (PLANE_MAX_ROTATION - this.rotateY) / PLANE_DURATION,
         ];
+
+        this.scale = random(0.2, 0.8);
     }
 
     update() {
-        this.rotateX += this.rotatingSpeeds[0];
-        this.rotateY += this.rotatingSpeeds[1];
-        this.rotateZ += this.rotatingSpeeds[2];
+        if (this.rotateX <= PLANE_MAX_ROTATION)
+            this.rotateX += this.rotatingSpeeds[0];
+        if (this.rotateY <= PLANE_MAX_ROTATION)
+            this.rotateY += this.rotatingSpeeds[1];
+        if (this.rotateZ <= PLANE_MAX_ROTATION)
+            this.rotateZ += this.rotatingSpeeds[2];
     }
 }
 
